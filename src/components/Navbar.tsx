@@ -1,19 +1,71 @@
+"use client";
+
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Search, Library, Trophy, Users } from "lucide-react";
+import { Search, Library, Trophy, Users, Menu } from "lucide-react";
 import ProfileButton from "./ProfileButton";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-const Navbar = () => {
+export default function Navbar() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleProtectedNavigation = (e: React.MouseEvent, path: string) => {
+  const handleProtectedNavigation = (path: string) => {
     if (!user) {
-      e.preventDefault();
       navigate("/auth");
+    } else {
+      navigate(path);
     }
+    setIsOpen(false);
   };
+
+  const handleSignOut = () => {
+    signOut();
+    setIsOpen(false);
+  };
+
+  const NavItems = () => (
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => {
+          navigate("/search");
+          setIsOpen(false);
+        }}
+      >
+        <Search className="h-5 w-5" />
+        <span className="sr-only">Search</span>
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => handleProtectedNavigation("/library")}
+      >
+        <Library className="h-5 w-5" />
+        <span className="sr-only">Library</span>
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => handleProtectedNavigation("/challenges")}
+      >
+        <Trophy className="h-5 w-5" />
+        <span className="sr-only">Challenges</span>
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => handleProtectedNavigation("/groups")}
+      >
+        <Users className="h-5 w-5" />
+        <span className="sr-only">Groups</span>
+      </Button>
+    </>
+  );
 
   return (
     <nav className="bg-white shadow-sm">
@@ -23,40 +75,8 @@ const Navbar = () => {
             Read Realm
           </Link>
 
-          <div className="flex items-center space-x-4">
-            <Link to="/search">
-              <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
-              </Button>
-            </Link>
-
-            <Link
-              to="/library"
-              onClick={(e) => handleProtectedNavigation(e, "/library")}
-            >
-              <Button variant="ghost" size="icon">
-                <Library className="h-5 w-5" />
-              </Button>
-            </Link>
-
-            <Link
-              to="/challenges"
-              onClick={(e) => handleProtectedNavigation(e, "/challenges")}
-            >
-              <Button variant="ghost" size="icon">
-                <Trophy className="h-5 w-5" />
-              </Button>
-            </Link>
-
-            <Link
-              to="/groups"
-              onClick={(e) => handleProtectedNavigation(e, "/groups")}
-            >
-              <Button variant="ghost" size="icon">
-                <Users className="h-5 w-5" />
-              </Button>
-            </Link>
-
+          <div className="hidden md:flex items-center space-x-4">
+            <NavItems />
             {user ? (
               <>
                 <ProfileButton />
@@ -70,10 +90,75 @@ const Navbar = () => {
               </Link>
             )}
           </div>
+
+          <div className="md:hidden">
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <nav className="flex flex-col space-y-4">
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => {
+                      navigate("/search");
+                      setIsOpen(false);
+                    }}
+                  >
+                    <Search className="mr-2 h-5 w-5" />
+                    Search
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => handleProtectedNavigation("/library")}
+                  >
+                    <Library className="mr-2 h-5 w-5" />
+                    Library
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => handleProtectedNavigation("/challenges")}
+                  >
+                    <Trophy className="mr-2 h-5 w-5" />
+                    Challenges
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="justify-start"
+                    onClick={() => handleProtectedNavigation("/groups")}
+                  >
+                    <Users className="mr-2 h-5 w-5" />
+                    Groups
+                  </Button>
+                  {user ? (
+                    <>
+                      <ProfileButton />
+                      <Button onClick={handleSignOut} variant="outline">
+                        Sign Out
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        navigate("/auth");
+                        setIsOpen(false);
+                      }}
+                    >
+                      Sign In
+                    </Button>
+                  )}
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}
