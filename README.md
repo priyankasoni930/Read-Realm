@@ -16,17 +16,6 @@ npm i
 npm run dev
 ```
 
-
-
-
-
-
-
-
-
-
-
-
 ## What technologies are used for this project?
 
 This project is built with .
@@ -37,7 +26,6 @@ This project is built with .
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
 
 All GPT Engineer projects can be deployed directly via the GPT Engineer app.
 
