@@ -17,8 +17,6 @@ npm run dev
 ```
 
 
-- Navigate to the desired file(s).
-
 
 
 **Use GitHub Codespaces**
