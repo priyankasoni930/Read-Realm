@@ -27,10 +27,6 @@ This project is built with .
 - Tailwind CSS
 
 
-
-
-Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/20ed838f-cf94-4b35-949b-f01d6ed2e110/improve) and click on Share -> Publish.
-
 ## I want to use a custom domain - is that possible?
 
 We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.gptengineer.app/tips-tricks/custom-domain/)
