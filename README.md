@@ -27,7 +27,7 @@ This project is built with .
 - Tailwind CSS
 
 
-All GPT Engineer projects can be deployed directly via the GPT Engineer app.
+
 
 Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/20ed838f-cf94-4b35-949b-f01d6ed2e110/improve) and click on Share -> Publish.
 
