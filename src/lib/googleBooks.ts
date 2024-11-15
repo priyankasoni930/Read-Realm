@@ -1,5 +1,5 @@
-const API_KEY = "AIzaSyCKgE6qqN6GoEQsnvgQUQ4QH9eBNdG0-sU";
-//  'AIzaSyBWJspfe74L5OnvOzWikxbfKDGQdhB8_no';
+const API_KEY ='AIzaSyBWJspfe74L5OnvOzWikxbfKDGQdhB8_no';
+//"AIzaSyCKgE6qqN6GoEQsnvgQUQ4QH9eBNdG0-sU"
 const BASE_URL = "https://www.googleapis.com/books/v1/volumes";
 
 export const fetchBooksByGenre = async (genre: string) => {
