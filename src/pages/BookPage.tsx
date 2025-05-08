@@ -92,7 +92,7 @@ const BookPage = () => {
       const { data, error } = await supabase
         .from("reviews")
         .select("*")
-        .eq("bookID", id)
+        .eq("bookid", id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;

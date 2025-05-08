@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import StarRating from "./StarRating";
@@ -25,7 +25,7 @@ const ReviewForm = ({ bookId, onSubmit }: ReviewFormProps) => {
         .from("reviews")
         .select("*")
         .eq("user_id", user?.id)
-        .eq("bookID", bookId);
+        .eq("bookid", bookId);
 
       if (error) throw error;
       return data?.[0] || null;
@@ -33,8 +33,16 @@ const ReviewForm = ({ bookId, onSubmit }: ReviewFormProps) => {
     enabled: !!user && !!bookId,
   });
 
-  const [rating, setRating] = useState(existingReview?.rating || 0);
-  const [content, setContent] = useState(existingReview?.content || "");
+  const [rating, setRating] = useState(0);
+  const [content, setContent] = useState("");
+
+  // Update form if existingReview is loaded
+  useEffect(() => {
+    if (existingReview) {
+      setRating(existingReview.rating || 0);
+      setContent(existingReview.content || "");
+    }
+  }, [existingReview]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,10 +58,9 @@ const ReviewForm = ({ bookId, onSubmit }: ReviewFormProps) => {
     try {
       const reviewData = {
         user_id: user.id,
-        bookID: bookId,
+        bookid: bookId,
         rating,
         content,
-        text: content,
         created_at: new Date().toISOString(),
       };
 
@@ -65,7 +72,7 @@ const ReviewForm = ({ bookId, onSubmit }: ReviewFormProps) => {
           .from("reviews")
           .update(reviewData)
           .eq("user_id", user.id)
-          .eq("bookID", bookId);
+          .eq("bookid", bookId);
         error = updateError;
       } else {
         // Create new review

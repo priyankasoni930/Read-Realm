@@ -13,18 +13,22 @@ interface CreateBooklistDialogProps {
   onCreateBooklist: (name: string) => void;
 }
 
-const CreateBooklistDialog = ({ onCreateBooklist }: CreateBooklistDialogProps) => {
+const CreateBooklistDialog = ({
+  onCreateBooklist,
+}: CreateBooklistDialogProps) => {
   const [name, setName] = useState("");
+  const [open, setOpen] = useState(false);
 
   const handleCreate = () => {
     if (name.trim()) {
       onCreateBooklist(name.trim());
       setName("");
+      setOpen(false);
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>Create New Booklist</Button>
       </DialogTrigger>
@@ -37,6 +41,11 @@ const CreateBooklistDialog = ({ onCreateBooklist }: CreateBooklistDialogProps) =
             placeholder="Enter booklist name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleCreate();
+              }
+            }}
           />
           <Button onClick={handleCreate}>Create</Button>
         </div>

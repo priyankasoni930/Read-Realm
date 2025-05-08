@@ -17,6 +17,7 @@ const EditProfilePage = () => {
     full_name: "",
     bio: "",
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -36,6 +37,7 @@ const EditProfilePage = () => {
           bio: data.bio || "",
         });
       } catch (error) {
+        console.error("Error fetching profile:", error);
         toast({
           title: "Error",
           description: "Failed to load profile",
@@ -51,12 +53,30 @@ const EditProfilePage = () => {
     e.preventDefault();
     if (!user) return;
 
+    setLoading(true);
+
     try {
-      const { error } = await supabase.from("profiles").upsert({
-        id: user.id,
-        ...formData,
-        updated_at: new Date().toISOString(),
-      });
+      // First make sure the authenticated user matches the profile ID
+      // This is required for RLS policy to work
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+
+      if (sessionError) throw sessionError;
+
+      if (!sessionData.session) {
+        throw new Error("No active session");
+      }
+
+      // Update the profile
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          username: formData.username,
+          full_name: formData.full_name,
+          bio: formData.bio,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
 
       if (error) throw error;
 
@@ -65,12 +85,16 @@ const EditProfilePage = () => {
         description: "Profile updated successfully",
       });
       navigate("/profile");
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error("Error updating profile:", error);
       toast({
         title: "Error",
-        description: "Failed to update profile",
+        description:
+          error instanceof Error ? error.message : "Failed to update profile",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,7 +165,9 @@ const EditProfilePage = () => {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit">Save Changes</Button>
+                  <Button type="submit" disabled={loading}>
+                    {loading ? "Saving..." : "Save Changes"}
+                  </Button>
                 </div>
               </form>
             </CardContent>

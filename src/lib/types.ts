@@ -31,10 +31,9 @@ export interface User {
 export interface DatabaseReview {
   id: number;
   user_id: number;
-  bookID: string;
+  bookid: string;
   rating: number;
   content: string;
-  text: string;
   created_at: string;
 }
 

@@ -2,13 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { useBooklists } from "@/hooks/useBooklists";
 import BooklistCard from "@/components/library/BooklistCard";
 import CreateBooklistDialog from "@/components/library/CreateBooklistDialog";
+import { Book } from "@/lib/types";
 
 const LibraryPage = () => {
   const navigate = useNavigate();
-  const { booklists, isLoading, createBooklist } = useBooklists();
+  const { booklists, isLoading, createBooklist, addBookToBooklist } =
+    useBooklists();
 
   const handleBookClick = (bookId: string) => {
     navigate(`/book/${bookId}`);
+  };
+
+  const handleAddBook = (booklistId: string, book: Book) => {
+    addBookToBooklist.mutate({ booklistId, book });
   };
 
   if (isLoading) {
@@ -35,8 +41,10 @@ const LibraryPage = () => {
             <BooklistCard
               key={booklist.id}
               name={booklist.name}
+              booklistId={booklist.id}
               books={booklist.books}
               onBookClick={handleBookClick}
+              onAddBook={handleAddBook}
             />
           ))}
         </div>

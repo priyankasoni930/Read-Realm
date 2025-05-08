@@ -11,18 +11,21 @@ interface BookCardProps {
 
 const BookCard = ({ book, onClick }: BookCardProps) => {
   const { data: averageRating = 0 } = useQuery({
-    queryKey: ['bookRating', book.id],
+    queryKey: ["bookRating", book.id],
     queryFn: async () => {
       const { data: reviews, error } = await supabase
-        .from('reviews')
-        .select('rating')
-        .eq('bookID', book.id);
+        .from("reviews")
+        .select("rating")
+        .eq("bookid", book.id);
 
       if (error) throw error;
 
       if (!reviews || reviews.length === 0) return 0;
 
-      const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+      const totalRating = reviews.reduce(
+        (sum, review) => sum + review.rating,
+        0
+      );
       return Number((totalRating / reviews.length).toFixed(1));
     },
   });
@@ -40,7 +43,9 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
         />
       </div>
       <div className="p-4 flex flex-col flex-grow">
-        <h3 className="font-semibold text-bookCharcoal line-clamp-2">{book.title}</h3>
+        <h3 className="font-semibold text-bookCharcoal line-clamp-2">
+          {book.title}
+        </h3>
         <p className="text-sm text-gray-600 mt-1">{book.author}</p>
         <div className="mt-2">
           <StarRating rating={averageRating} readonly />

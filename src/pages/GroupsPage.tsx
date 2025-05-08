@@ -21,6 +21,7 @@ const GroupsPage = () => {
   const { toast } = useToast();
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [groups, setGroups] = useState<Group[]>([]);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     fetchGroups();
@@ -63,6 +64,7 @@ const GroupsPage = () => {
     }
 
     setGroups([data, ...groups]);
+    setOpenDialog(false);
   };
 
   const handleShareGroup = (groupId: string) => {
@@ -80,7 +82,7 @@ const GroupsPage = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-gray-100">Forum</h1>
-            <Dialog>
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
               <DialogTrigger asChild>
                 <Button
                   variant="secondary"
