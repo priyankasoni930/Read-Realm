@@ -52,7 +52,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     button:
       "from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600",
     accent: "bg-pink-100",
-    mainBackground: "from-pink-50 to-white",
+    mainBackground: "from-pink-50 to-pink-100",
     headingText: "text-pink-900",
     subheadingText: "text-pink-700",
     border: "border-pink-100",
@@ -67,7 +67,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     button:
       "from-indigo-500 to-purple-400 hover:from-indigo-600 hover:to-purple-500",
     accent: "bg-indigo-100",
-    mainBackground: "from-indigo-50 to-white",
+    mainBackground: "from-indigo-50 to-indigo-100",
     headingText: "text-indigo-900",
     subheadingText: "text-indigo-700",
     border: "border-indigo-100",
@@ -82,7 +82,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     button:
       "from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500",
     accent: "bg-emerald-100",
-    mainBackground: "from-emerald-50 to-white",
+    mainBackground: "from-emerald-50 to-emerald-100",
     headingText: "text-emerald-900",
     subheadingText: "text-emerald-700",
     border: "border-emerald-100",
@@ -96,7 +96,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     badge: "border-amber-200 text-amber-700 bg-white/50",
     button: "from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600",
     accent: "bg-amber-100",
-    mainBackground: "from-amber-50 to-white",
+    mainBackground: "from-amber-50 to-amber-100",
     headingText: "text-amber-900",
     subheadingText: "text-amber-700",
     border: "border-amber-100",
@@ -110,7 +110,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     badge: "border-sky-200 text-sky-700 bg-white/50",
     button: "from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600",
     accent: "bg-sky-100",
-    mainBackground: "from-sky-50 to-white",
+    mainBackground: "from-sky-50 to-sky-100 ",
     headingText: "text-sky-900",
     subheadingText: "text-sky-700",
     border: "border-sky-100",
@@ -125,7 +125,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     button:
       "from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600",
     accent: "bg-violet-100",
-    mainBackground: "from-violet-50 to-white",
+    mainBackground: "from-violet-50 to-violet-100 ",
     headingText: "text-violet-900",
     subheadingText: "text-violet-700",
     border: "border-violet-100",
@@ -136,7 +136,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
   },
 };
 
-// Add an array of avatar options using public avatar APIs with varied background colors
+// Add an array of avatar options using public avatar APIs
 const avatarOptions = [
   "https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=d1d4f9",
   "https://api.dicebear.com/7.x/avataaars/svg?seed=Milo&backgroundColor=c0aede",
@@ -150,31 +150,31 @@ const avatarOptions = [
   "https://api.dicebear.com/7.x/adventurer/svg?seed=Jasper&backgroundColor=ffdfbf",
   "https://api.dicebear.com/9.x/micah/svg?seed=Leah&backgroundColor=ffd5dc",
   "https://api.dicebear.com/9.x/micah/svg?seed=Liam&backgroundColor=c1e1c5",
-  "https://api.dicebear.com/9.x/micah/svg?seed=Olivia&backgroundColor=f0c6a0",
-  "https://api.dicebear.com/9.x/micah/svg?seed=Ethan&backgroundColor=b1c7ff",
-  "https://api.dicebear.com/9.x/micah/svg?seed=Ava&backgroundColor=c0e5c0",
-  "https://api.dicebear.com/9.x/micah/svg?seed=Mason&backgroundColor=ffd0b0",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Aidan&backgroundColor=c9e1f9",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Aiden&backgroundColor=e5d0e3",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Sawyer&backgroundColor=c8f4f4",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Avery&backgroundColor=dfcdab",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Alexander&backgroundColor=b9d9eb",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Leah&backgroundColor=d8bfd8",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Caleb&backgroundColor=beebfa",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Jack&backgroundColor=e6e6fa",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Brooklyn&backgroundColor=ffe4e1",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Katherine&backgroundColor=d5d5ff",
-  "https://api.dicebear.com/9.x/adventurer/svg?seed=Kimberly&backgroundColor=c8e8f5",
-  "https://api.dicebear.com/7.x/bottts/svg?seed=Pepper&backgroundColor=d9f0d3",
-  "https://api.dicebear.com/9.x/bottts/svg?seed=Aidan&backgroundColor=fff0f5",
-  "https://api.dicebear.com/9.x/bottts/svg?seed=Christian&backgroundColor=e6f0fa",
-  "https://api.dicebear.com/9.x/bottts/svg?seed=Jack&backgroundColor=ffeacc",
-  "https://api.dicebear.com/9.x/bottts/svg?seed=Aiden&backgroundColor=dcedc1",
-  "https://api.dicebear.com/9.x/bottts/svg?seed=Jade&backgroundColor=f0e6fa",
-  "https://api.dicebear.com/9.x/bottts/svg?seed=Liliana&backgroundColor=e8f8f5",
-  "https://api.dicebear.com/9.x/bottts/svg?seed=Broklynn&backgroundColor=ffccbc",
-  "https://api.dicebear.com/9.x/bottts/svg?seed=Katherine&backgroundColor=b2ebf2",
-  "https://api.dicebear.com/9.x/bottts/svg?seed=Kimberly&backgroundColor=d1c4e9",
+  "https://api.dicebear.com/9.x/micah/svg?seed=Olivia&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/micah/svg?seed=Ethan&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/micah/svg?seed=Ava&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/micah/svg?seed=Mason&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Aidan&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Aiden&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Sawyer&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Avery&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Alexander&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Leah&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Caleb&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Jack&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Brooklyn&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Katherine&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/adventurer/svg?seed=Kimberly&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/7.x/bottts/svg?seed=Pepper&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/bottts/svg?seed=Aidan&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/bottts/svg?seed=Christian&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/bottts/svg?seed=Jack&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/bottts/svg?seed=Aiden&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/bottts/svg?seed=Jade&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/bottts/svg?seed=Liliana&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/bottts/svg?seed=Broklynn&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/bottts/svg?seed=Katherine&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/bottts/svg?seed=Kimberly&backgroundColor=ffd5dc",
 
   // Default placeholder
   "https://api.dicebear.com/7.x/identicon/svg?seed=ReadRealm",
@@ -449,7 +449,7 @@ const ProfilePage = () => {
 
   return (
     <div
-      className={`container mx-auto px-4 py-8 max-w-full bg-gradient-to-b ${theme.mainBackground} min-h-screen overflow-x-hidden`}
+      className={`container mx-auto px-4 py-8 max-w-full bg-gradient-to-b ${theme.mainBackground} min-h-[900px] overflow-x-hidden`}
     >
       {/* Decorative elements */}
       <div

@@ -334,7 +334,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     button:
       "from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600",
     accent: "bg-pink-100",
-    mainBackground: "from-pink-50 to-white",
+    mainBackground: "from-pink-50 to-pink-100",
     headingText: "text-pink-900",
     subheadingText: "text-pink-700",
     border: "border-pink-100",
@@ -349,7 +349,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     button:
       "from-indigo-500 to-purple-400 hover:from-indigo-600 hover:to-purple-500",
     accent: "bg-indigo-100",
-    mainBackground: "from-indigo-50 to-white",
+    mainBackground: "from-indigo-50 to-indigo-100",
     headingText: "text-indigo-900",
     subheadingText: "text-indigo-700",
     border: "border-indigo-100",
@@ -364,7 +364,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     button:
       "from-emerald-500 to-teal-400 hover:from-emerald-600 hover:to-teal-500",
     accent: "bg-emerald-100",
-    mainBackground: "from-emerald-50 to-white",
+    mainBackground: "from-emerald-50 to-emerald-100",
     headingText: "text-emerald-900",
     subheadingText: "text-emerald-700",
     border: "border-emerald-100",
@@ -378,7 +378,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     badge: "border-amber-200 text-amber-700 bg-white/50",
     button: "from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600",
     accent: "bg-amber-100",
-    mainBackground: "from-amber-50 to-white",
+    mainBackground: "from-amber-50 to-amber-100",
     headingText: "text-amber-900",
     subheadingText: "text-amber-700",
     border: "border-amber-100",
@@ -392,7 +392,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     badge: "border-sky-200 text-sky-700 bg-white/50",
     button: "from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600",
     accent: "bg-sky-100",
-    mainBackground: "from-sky-50 to-white",
+    mainBackground: "from-sky-50 to-sky-100",
     headingText: "text-sky-900",
     subheadingText: "text-sky-700",
     border: "border-sky-100",
@@ -407,7 +407,7 @@ const themeConfig: Record<ProfileTheme, ThemeConfig> = {
     button:
       "from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600",
     accent: "bg-violet-100",
-    mainBackground: "from-violet-50 to-white",
+    mainBackground: "from-violet-50 to-violet-100 ",
     headingText: "text-violet-900",
     subheadingText: "text-violet-700",
     border: "border-violet-100",
