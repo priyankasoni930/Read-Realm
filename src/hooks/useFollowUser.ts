@@ -9,16 +9,16 @@ export const useFollowUser = (userId: string) => {
   const queryClient = useQueryClient();
 
   const { data: isFollowing } = useQuery({
-    queryKey: ['following', userId],
+    queryKey: ["following", userId],
     queryFn: async () => {
       if (!user) return false;
-      
+
       const { data } = await supabase
-        .from('follows')
-        .select('*')
-        .eq('follower_id', user.id)
-        .eq('following_id', userId);
-      
+        .from("follows")
+        .select("*")
+        .eq("follower_id", user.id)
+        .eq("following_id", userId);
+
       return data && data.length > 0;
     },
     enabled: !!user && user.id !== userId,
@@ -27,29 +27,31 @@ export const useFollowUser = (userId: string) => {
   const toggleFollow = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Must be logged in to follow users");
-      
+
       if (isFollowing) {
         const { error } = await supabase
-          .from('follows')
+          .from("follows")
           .delete()
-          .eq('follower_id', user.id)
-          .eq('following_id', userId);
-          
+          .eq("follower_id", user.id)
+          .eq("following_id", userId);
+
         if (error) throw error;
       } else {
         const { error } = await supabase
-          .from('follows')
+          .from("follows")
           .insert([{ follower_id: user.id, following_id: userId }]);
-          
+
         if (error) throw error;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['following', userId] });
-      queryClient.invalidateQueries({ queryKey: ['followStats', userId] });
+      queryClient.invalidateQueries({ queryKey: ["following", userId] });
+      queryClient.invalidateQueries({ queryKey: ["followStats", userId] });
       toast({
         title: isFollowing ? "Unfollowed" : "Following",
-        description: isFollowing ? "You unfollowed this user" : "You are now following this user",
+        description: isFollowing
+          ? "You unfollowed this user"
+          : "You are now following this user",
       });
     },
     onError: () => {
@@ -69,18 +71,40 @@ export const useFollowUser = (userId: string) => {
 
 export const useFollowStats = (userId: string) => {
   return useQuery({
-    queryKey: ['followStats', userId],
+    queryKey: ["followStats", userId],
     queryFn: async () => {
+      // Explicitly request both the relation and profile fields
       const [followersResponse, followingResponse] = await Promise.all([
         supabase
-          .from('follows')
-          .select('follower_id, profiles!follows_follower_id_fkey(username, avatar_url)')
-          .eq('following_id', userId),
+          .from("follows")
+          .select(
+            `
+            follower_id, 
+            profiles:follower_id (
+              id,
+              username, 
+              avatar_url
+            )
+          `
+          )
+          .eq("following_id", userId),
         supabase
-          .from('follows')
-          .select('following_id, profiles!follows_following_id_fkey(username, avatar_url)')
-          .eq('follower_id', userId)
+          .from("follows")
+          .select(
+            `
+            following_id, 
+            profiles:following_id (
+              id,
+              username, 
+              avatar_url
+            )
+          `
+          )
+          .eq("follower_id", userId),
       ]);
+
+      console.log("Followers data:", followersResponse.data);
+      console.log("Following data:", followingResponse.data);
 
       return {
         followers: followersResponse.data || [],

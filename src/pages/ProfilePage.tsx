@@ -210,6 +210,9 @@ function UserListDialog({ title, userList, theme }: UserListDialogProps) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
+  // Add debug logging
+  console.log(`${title} data in ProfilePage:`, userList);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -253,14 +256,41 @@ function UserListDialog({ title, userList, theme }: UserListDialogProps) {
           ) : (
             <div className="space-y-4">
               {userList.map((user, index) => {
-                // Handle user data structure
-                const userId = user.id || user.follower_id || user.following_id;
+                // Add debugging for each user
+                console.log(`User ${index} data:`, user);
+
+                // Get the ID based on whether it's a follower or following
+                const userId =
+                  title === "Followers" ? user.follower_id : user.following_id;
+
+                // Safely extract profile data with additional fallbacks
+                let profileData = null;
+
+                // Check the most likely places for profile data based on our query
+                if (user.profiles) {
+                  if (Array.isArray(user.profiles)) {
+                    // It's an array of profiles
+                    profileData = user.profiles[0];
+                  } else {
+                    // It's a single profile object
+                    profileData = user.profiles;
+                  }
+                } else if (user.profile) {
+                  // Try the singular "profile" property as fallback
+                  profileData = user.profile;
+                }
+
+                // Extract username and avatar with fallbacks
                 const username =
-                  user.username || user.profile?.username || "User";
+                  profileData?.username || user.username || "User";
                 const avatarUrl =
+                  profileData?.avatar_url ||
                   user.avatar_url ||
-                  user.profile?.avatar_url ||
                   "/placeholder.svg";
+
+                console.log(
+                  `Extracted for user ${index}: userId=${userId}, username=${username}`
+                );
 
                 return (
                   <div
