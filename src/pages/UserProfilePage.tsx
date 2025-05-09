@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -425,15 +425,38 @@ const UserProfilePage = () => {
   const { isFollowing, toggleFollow } = useFollowUser(id || "");
   const queryClient = useQueryClient();
 
-  // Initialize theme from localStorage or use pink as default
-  const [selectedTheme, setSelectedTheme] = useState<ProfileTheme>(() => {
-    // Try to get saved theme from localStorage
-    const savedTheme = localStorage.getItem("userPreferredTheme");
-    // Check if the saved theme is a valid ProfileTheme
-    return savedTheme && Object.keys(themeConfig).includes(savedTheme)
-      ? (savedTheme as ProfileTheme)
-      : "pink";
-  });
+  // Track if theme is still loading
+  const [isThemeLoading, setIsThemeLoading] = useState(true);
+
+  // Initialize with pink as the default theme
+  // No need to use localStorage when viewing other users' profiles
+  // Will be updated with the profile owner's theme from the database
+  const [selectedTheme, setSelectedTheme] = useState<ProfileTheme>("lavender");
+
+  // Preload the theme as early as possible
+  useEffect(() => {
+    const preloadTheme = async () => {
+      if (!id) return;
+
+      try {
+        const { data } = await supabase
+          .from("profiles")
+          .select("theme")
+          .eq("id", id)
+          .single();
+
+        if (data?.theme) {
+          setSelectedTheme(data.theme as ProfileTheme);
+        }
+        setIsThemeLoading(false);
+      } catch (error) {
+        console.error("Error preloading theme:", error);
+        setIsThemeLoading(false);
+      }
+    };
+
+    preloadTheme();
+  }, [id]);
 
   // Current theme config
   const theme = themeConfig[selectedTheme];
@@ -449,11 +472,17 @@ const UserProfilePage = () => {
 
       if (error) throw error;
 
-      // Set the theme from profile data if profile owner is viewing their own profile
-      // Otherwise, keep the viewer's preferred theme
-      if (currentUser && currentUser.id === id && data?.theme) {
+      // When viewing someone else's profile, use their theme
+      if (data?.theme) {
+        // Set to the profile owner's theme
         setSelectedTheme(data.theme as ProfileTheme);
+      } else {
+        // If no theme is set for the user, use pink as default
+        setSelectedTheme("lavender");
       }
+
+      // Mark theme as loaded in either case
+      setIsThemeLoading(false);
 
       return data;
     },
@@ -462,8 +491,10 @@ const UserProfilePage = () => {
   // Mutation to update the theme
   const updateTheme = useMutation({
     mutationFn: async (newTheme: ProfileTheme) => {
-      // Save theme preference to localStorage for all profile pages
-      localStorage.setItem("userPreferredTheme", newTheme);
+      // Only save theme preference to localStorage if viewing own profile
+      if (currentUser && currentUser.id === id) {
+        localStorage.setItem("userPreferredTheme", newTheme);
+      }
 
       // Only update in database if viewing own profile
       if (currentUser && currentUser.id === id) {
@@ -579,10 +610,16 @@ const UserProfilePage = () => {
       enabled: !!id,
     });
 
-  if (isProfileLoading || isReadingListsLoading) {
+  if (isProfileLoading || isReadingListsLoading || isThemeLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="text-center">Loading...</div>
+      <div className="container mx-auto py-16 px-4 flex flex-col items-center justify-center min-h-[80vh]">
+        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-pink-300 to-purple-300 animate-pulse mb-8"></div>
+        <div className="text-xl font-medium text-gray-700">
+          Loading profile...
+        </div>
+        <div className="text-sm text-gray-500 mt-2">
+          Please wait while we fetch the user's details
+        </div>
       </div>
     );
   }

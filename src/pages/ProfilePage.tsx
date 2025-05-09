@@ -315,18 +315,24 @@ const ProfilePage = () => {
   const { data: followStats } = useFollowStats(user?.id || "");
   const queryClient = useQueryClient();
 
-  // Initialize theme from localStorage or use pink as default
+  // Initialize with theme from localStorage or pink as fallback
   const [selectedTheme, setSelectedTheme] = useState<ProfileTheme>(() => {
-    // Try to get saved theme from localStorage
     const savedTheme = localStorage.getItem("userPreferredTheme");
-    // Check if the saved theme is a valid ProfileTheme
     return savedTheme && Object.keys(themeConfig).includes(savedTheme)
       ? (savedTheme as ProfileTheme)
-      : "pink";
+      : "lavender";
   });
+
+  // Add state for theme dialog
+  const [themeDialogOpen, setThemeDialogOpen] = useState(false);
 
   // Current theme config
   const theme = themeConfig[selectedTheme];
+
+  // State for avatar selection dialog
+  const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
+  const [isHoveringAvatar, setIsHoveringAvatar] = useState(false);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", user?.id],
@@ -339,10 +345,18 @@ const ProfilePage = () => {
 
       if (error) throw error;
 
-      // Set the theme from profile data if available
-      if (data?.theme) {
+      // Set the theme from profile data if available and different from current
+      if (data?.theme && data.theme !== selectedTheme) {
         setSelectedTheme(data.theme as ProfileTheme);
+        // Update localStorage with the theme from database
         localStorage.setItem("userPreferredTheme", data.theme);
+      } else if (!data?.theme) {
+        // If no theme in database but exists in localStorage, use that
+        const savedTheme = localStorage.getItem("userPreferredTheme");
+        if (savedTheme && Object.keys(themeConfig).includes(savedTheme)) {
+          // Update database with the theme from localStorage
+          updateThemeInDatabase(savedTheme as ProfileTheme);
+        }
       }
 
       return data;
@@ -350,27 +364,75 @@ const ProfilePage = () => {
     enabled: !!user,
   });
 
-  // Handle theme change
-  const handleThemeChange = (newTheme: ProfileTheme) => {
-    setSelectedTheme(newTheme);
-    localStorage.setItem("userPreferredTheme", newTheme);
+  // Function to update theme in the database
+  const updateThemeInDatabase = async (newTheme: ProfileTheme) => {
+    if (!user) return Promise.resolve();
 
-    // Update in database
-    if (user) {
-      supabase
+    try {
+      // First check if profile exists
+      const { data: existingProfile } = await supabase
         .from("profiles")
-        .update({ theme: newTheme })
+        .select("id")
         .eq("id", user.id)
-        .then(({ error }) => {
-          if (error) console.error("Error updating theme:", error);
-        });
+        .single();
+
+      let error = null;
+
+      if (existingProfile) {
+        // Update existing profile
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update({
+            theme: newTheme,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", user.id);
+
+        error = updateError;
+      } else {
+        // Create new profile if it doesn't exist
+        const { error: insertError } = await supabase.from("profiles").insert([
+          {
+            id: user.id,
+            theme: newTheme,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ]);
+
+        error = insertError;
+      }
+
+      if (error) {
+        console.error("Error updating theme:", error);
+        return Promise.reject(error);
+      }
+
+      return Promise.resolve();
+    } catch (err) {
+      console.error("Error in theme update:", err);
+      return Promise.reject(err);
     }
   };
 
-  // State for avatar selection dialog
-  const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
-  const [isHoveringAvatar, setIsHoveringAvatar] = useState(false);
+  // Handle theme change
+  const handleThemeChange = (newTheme: ProfileTheme) => {
+    // Update local state immediately
+    setSelectedTheme(newTheme);
+
+    // Update localStorage
+    localStorage.setItem("userPreferredTheme", newTheme);
+
+    // Update in database and then force a refetch
+    updateThemeInDatabase(newTheme)
+      .then(() => {
+        // Force refetch data rather than just invalidating
+        queryClient.refetchQueries({ queryKey: ["profile", user?.id] });
+      })
+      .catch((error) => {
+        console.error("Failed to update theme:", error);
+      });
+  };
 
   // Handle avatar change with a proper query invalidation
   const handleAvatarChange = async (avatarUrl: string) => {
@@ -381,14 +443,14 @@ const ProfilePage = () => {
         // First check if profile exists
         const { data: existingProfile } = await supabase
           .from("profiles")
-          .select("id")
+          .select("id, theme")
           .eq("id", user.id)
           .single();
 
         let error = null;
 
         if (existingProfile) {
-          // Update existing profile
+          // Update existing profile while preserving theme
           const { error: updateError } = await supabase
             .from("profiles")
             .update({
@@ -399,13 +461,17 @@ const ProfilePage = () => {
 
           error = updateError;
         } else {
-          // Create new profile if it doesn't exist
+          // Create new profile if it doesn't exist, set theme too
+          const currentTheme =
+            localStorage.getItem("userPreferredTheme") || "pink";
+
           const { error: insertError } = await supabase
             .from("profiles")
             .insert([
               {
                 id: user.id,
                 avatar_url: avatarUrl,
+                theme: currentTheme,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
               },
@@ -486,7 +552,7 @@ const ProfilePage = () => {
             <Edit className="h-4 w-4" />
           </Button>
           <div>
-            <Dialog>
+            <Dialog open={themeDialogOpen} onOpenChange={setThemeDialogOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
@@ -504,42 +570,60 @@ const ProfilePage = () => {
                 </DialogHeader>
                 <div className="p-4 grid grid-cols-3 gap-3">
                   <button
-                    onClick={() => handleThemeChange("pink")}
+                    onClick={() => {
+                      handleThemeChange("pink");
+                      setThemeDialogOpen(false);
+                    }}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-pink-50"
                   >
                     <div className="w-10 h-10 rounded-full bg-pink-400"></div>
                     <span className="text-sm">Pink</span>
                   </button>
                   <button
-                    onClick={() => handleThemeChange("lavender")}
+                    onClick={() => {
+                      handleThemeChange("lavender");
+                      setThemeDialogOpen(false);
+                    }}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-indigo-50"
                   >
                     <div className="w-10 h-10 rounded-full bg-indigo-400"></div>
                     <span className="text-sm">Lavender</span>
                   </button>
                   <button
-                    onClick={() => handleThemeChange("mint")}
+                    onClick={() => {
+                      handleThemeChange("mint");
+                      setThemeDialogOpen(false);
+                    }}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-emerald-50"
                   >
                     <div className="w-10 h-10 rounded-full bg-emerald-400"></div>
                     <span className="text-sm">Mint</span>
                   </button>
                   <button
-                    onClick={() => handleThemeChange("sunset")}
+                    onClick={() => {
+                      handleThemeChange("sunset");
+                      setThemeDialogOpen(false);
+                    }}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-amber-50"
                   >
                     <div className="w-10 h-10 rounded-full bg-amber-400"></div>
                     <span className="text-sm">Sunset</span>
                   </button>
                   <button
-                    onClick={() => handleThemeChange("ocean")}
+                    onClick={() => {
+                      handleThemeChange("ocean");
+                      setThemeDialogOpen(false);
+                    }}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-sky-50"
                   >
                     <div className="w-10 h-10 rounded-full bg-sky-400"></div>
                     <span className="text-sm">Ocean</span>
                   </button>
                   <button
-                    onClick={() => handleThemeChange("galaxy")}
+                    onClick={() => {
+                      handleThemeChange("galaxy");
+                      setThemeDialogOpen(false);
+                    }}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-violet-50"
                   >
                     <div className="w-10 h-10 rounded-full bg-violet-400"></div>
