@@ -760,7 +760,7 @@ const ProfilePage = () => {
 
                 <Separator className={`border ${theme.separator}`} />
 
-                <div className="flex justify-between">
+                <div className="flex justify-center gap-10">
                   <UserListDialog
                     title="Followers"
                     userList={followStats?.followers || []}
@@ -771,15 +771,6 @@ const ProfilePage = () => {
                     userList={followStats?.following || []}
                     theme={theme}
                   />
-                  <div className="text-center cursor-pointer hover:bg-pink-50 rounded-lg p-2">
-                    <div className="flex items-center justify-center gap-1">
-                      <BookOpen size={16} className="text-pink-500" />
-                      <span className="font-semibold text-pink-900">
-                        {profile?.books_read || 0}
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-500">Books</p>
-                  </div>
                 </div>
 
                 <Separator className={`border ${theme.separator}`} />
